@@ -21,8 +21,9 @@ export const NOTIFICATIONS_EXPAND_FAIL    = 'NOTIFICATIONS_EXPAND_FAIL';
 
 export const NOTIFICATIONS_FILTER_SET = 'NOTIFICATIONS_FILTER_SET';
 
-export const NOTIFICATIONS_CLEAR      = 'NOTIFICATIONS_CLEAR';
-export const NOTIFICATIONS_SCROLL_TOP = 'NOTIFICATIONS_SCROLL_TOP';
+export const NOTIFICATIONS_CLEAR        = 'NOTIFICATIONS_CLEAR';
+export const NOTIFICATIONS_SCROLL_TOP   = 'NOTIFICATIONS_SCROLL_TOP';
+export const NOTIFICATIONS_LOAD_PENDING = 'NOTIFICATIONS_LOAD_PENDING';
 
 defineMessages({
   mention: { id: 'notification.mention', defaultMessage: '{name} mentioned you' },
@@ -36,6 +37,10 @@ const fetchRelatedRelationships = (dispatch, notifications) => {
     dispatch(fetchRelationships(accountIds));
   }
 };
+
+export const loadPending = () => ({
+  type: NOTIFICATIONS_LOAD_PENDING,
+});
 
 export function updateNotifications(notification, intlMessages, intlLocale) {
   return (dispatch, getState) => {
@@ -63,6 +68,7 @@ export function updateNotifications(notification, intlMessages, intlLocale) {
       dispatch({
         type: NOTIFICATIONS_UPDATE,
         notification,
+        usePendingItems: !getState().getIn(['settings', 'notifications', 'updateLive'], true),
         meta: (playSound && !filtered) ? { sound: 'boop' } : undefined,
       });
 

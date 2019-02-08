@@ -36,6 +36,16 @@ export default class ColumnSettings extends React.PureComponent {
           <ClearColumnButton onClick={onClear} />
         </div>
 
+        <div role='group' aria-labelledby='notifications-basic'>
+          <span id='notifications-basic' className='column-settings__section'>
+            <FormattedMessage id='home.column_settings.basic' defaultMessage='Basic' />
+          </span>
+
+          <div className='column-settings__row'>
+            <SettingToggle settings={settings} settingPath={['updateLive']} onChange={onChange} label={<FormattedMessage id='home.column_settings.update_live' defaultMessage='Update in real-time' />} />
+          </div>
+        </div>
+
         <div role='group' aria-labelledby='notifications-filter-bar'>
           <span id='notifications-filter-bar' className='column-settings__section'>
             <FormattedMessage id='notifications.column_settings.filter_bar.category' defaultMessage='Quick filter bar' />

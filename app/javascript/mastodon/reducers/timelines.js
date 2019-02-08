@@ -7,6 +7,7 @@ import {
   TIMELINE_EXPAND_FAIL,
   TIMELINE_SCROLL_TOP,
   TIMELINE_DISCONNECT,
+  TIMELINE_LOAD_PENDING,
 } from '../actions/timelines';
 import {
   ACCOUNT_BLOCK_SUCCESS,
@@ -23,6 +24,7 @@ const initialTimeline = ImmutableMap({
   top: true,
   isLoading: false,
   hasMore: true,
+  pendingItems: ImmutableList(),
   items: ImmutableList(),
 });
 
@@ -55,7 +57,15 @@ const expandNormalizedTimeline = (state, timeline, statuses, next, isPartial, is
   }));
 };
 
-const updateTimeline = (state, timeline, status) => {
+const updateTimeline = (state, timeline, status, usePendingItems) => {
+  if (usePendingItems) {
+    if (state.getIn([timeline, 'pendingItems'], ImmutableList()).includes(status.get('id')) || state.getIn([timeline, 'items'], ImmutableList()).includes(status.get('id'))) {
+      return state;
+    }
+
+    return state.update(timeline, initialTimeline, map => map.update('pendingItems', list => list.unshift(status.get('id'))));
+  }
+
   const top        = state.getIn([timeline, 'top']);
   const ids        = state.getIn([timeline, 'items'], ImmutableList());
   const includesId = ids.includes(status.get('id'));
@@ -121,6 +131,9 @@ const updateTop = (state, timeline, top) => {
 
 export default function timelines(state = initialState, action) {
   switch(action.type) {
+  case TIMELINE_LOAD_PENDING:
+    return state.update(action.timeline, initialTimeline, map =>
+      map.update('items', list => map.get('pendingItems').concat(list)).set('pendingItems', ImmutableList()));
   case TIMELINE_EXPAND_REQUEST:
     return state.update(action.timeline, initialTimeline, map => map.set('isLoading', true));
   case TIMELINE_EXPAND_FAIL:
@@ -128,7 +141,7 @@ export default function timelines(state = initialState, action) {
   case TIMELINE_EXPAND_SUCCESS:
     return expandNormalizedTimeline(state, action.timeline, fromJS(action.statuses), action.next, action.partial, action.isLoadingRecent);
   case TIMELINE_UPDATE:
-    return updateTimeline(state, action.timeline, fromJS(action.status));
+    return updateTimeline(state, action.timeline, fromJS(action.status), action.usePendingItems);
   case TIMELINE_DELETE:
     return deleteStatus(state, action.id, action.accountId, action.references, action.reblogOf);
   case TIMELINE_CLEAR:

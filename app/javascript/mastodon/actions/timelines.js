@@ -10,12 +10,17 @@ export const TIMELINE_EXPAND_REQUEST = 'TIMELINE_EXPAND_REQUEST';
 export const TIMELINE_EXPAND_SUCCESS = 'TIMELINE_EXPAND_SUCCESS';
 export const TIMELINE_EXPAND_FAIL    = 'TIMELINE_EXPAND_FAIL';
 
-export const TIMELINE_SCROLL_TOP = 'TIMELINE_SCROLL_TOP';
+export const TIMELINE_SCROLL_TOP   = 'TIMELINE_SCROLL_TOP';
+export const TIMELINE_LOAD_PENDING = 'TIMELINE_LOAD_PENDING';
+export const TIMELINE_DISCONNECT   = 'TIMELINE_DISCONNECT';
 
-export const TIMELINE_DISCONNECT = 'TIMELINE_DISCONNECT';
+export const loadPending = timeline => ({
+  type: TIMELINE_LOAD_PENDING,
+  timeline,
+});
 
 export function updateTimeline(timeline, status, accept) {
-  return dispatch => {
+  return (dispatch, getState) => {
     if (typeof accept === 'function' && !accept(status)) {
       return;
     }
@@ -26,6 +31,7 @@ export function updateTimeline(timeline, status, accept) {
       type: TIMELINE_UPDATE,
       timeline,
       status,
+      usePendingItems: !getState().getIn(['settings', timeline, 'updateLive'], true),
     });
   };
 };

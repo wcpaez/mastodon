@@ -42,6 +42,7 @@ class ColumnSettings extends React.PureComponent {
     if (this.state.open && this.hasTags()) {
       this.props.onChange('tags', {});
     }
+
     this.setState({ open: !this.state.open });
   };
 
@@ -49,6 +50,7 @@ class ColumnSettings extends React.PureComponent {
     return (
       <div className='column-settings__section'>
         {this.modeLabel(mode)}
+
         <AsyncSelect
           isMulti
           autoFocus
@@ -70,6 +72,7 @@ class ColumnSettings extends React.PureComponent {
     case 'all':  return <FormattedMessage id='hashtag.column_settings.tag_mode.all' defaultMessage='All of these' />;
     case 'none': return <FormattedMessage id='hashtag.column_settings.tag_mode.none' defaultMessage='None of these' />;
     }
+
     return '';
   };
 
@@ -83,11 +86,13 @@ class ColumnSettings extends React.PureComponent {
               onChange={this.onToggle}
               checked={this.state.open}
             />
+
             <span className='setting-toggle__label'>
               <FormattedMessage id='hashtag.column_settings.tag_toggle' defaultMessage='Include additional tags in this column' />
             </span>
           </div>
         </div>
+
         {this.state.open &&
           <div className='column-settings__hashtags'>
             {this.modeSelect('any')}

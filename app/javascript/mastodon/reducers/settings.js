@@ -10,11 +10,11 @@ import uuid from '../uuid';
 const initialState = ImmutableMap({
   saved: true,
 
-  onboarded: false,
-
   skinTone: 1,
 
   home: ImmutableMap({
+    updateLive: true,
+
     shows: ImmutableMap({
       reblog: true,
       reply: true,
@@ -26,6 +26,8 @@ const initialState = ImmutableMap({
   }),
 
   notifications: ImmutableMap({
+    updateLive: true,
+
     alerts: ImmutableMap({
       follow: true,
       favourite: true,
@@ -55,12 +57,16 @@ const initialState = ImmutableMap({
   }),
 
   community: ImmutableMap({
+    updateLive: true,
+
     regex: ImmutableMap({
       body: '',
     }),
   }),
 
   public: ImmutableMap({
+    updateLive: true,
+
     regex: ImmutableMap({
       body: '',
     }),
@@ -70,10 +76,6 @@ const initialState = ImmutableMap({
     regex: ImmutableMap({
       body: '',
     }),
-  }),
-
-  trends: ImmutableMap({
-    show: true,
   }),
 });
 

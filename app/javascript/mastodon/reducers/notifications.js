@@ -6,6 +6,7 @@ import {
   NOTIFICATIONS_FILTER_SET,
   NOTIFICATIONS_CLEAR,
   NOTIFICATIONS_SCROLL_TOP,
+  NOTIFICATIONS_LOAD_PENDING,
 } from '../actions/notifications';
 import {
   ACCOUNT_BLOCK_SUCCESS,
@@ -16,6 +17,7 @@ import { Map as ImmutableMap, List as ImmutableList } from 'immutable';
 import compareId from '../compare_id';
 
 const initialState = ImmutableMap({
+  pendingItems: ImmutableList(),
   items: ImmutableList(),
   hasMore: true,
   top: true,
@@ -31,7 +33,11 @@ const notificationToMap = notification => ImmutableMap({
   status: notification.status ? notification.status.id : null,
 });
 
-const normalizeNotification = (state, notification) => {
+const normalizeNotification = (state, notification, usePendingItems) => {
+  if (usePendingItems) {
+    return state.update('pendingItems', list => list.unshift(notificationToMap(notification)));
+  }
+
   const top = state.get('top');
 
   if (!top) {
@@ -95,6 +101,8 @@ const deleteByStatus = (state, statusId) => {
 
 export default function notifications(state = initialState, action) {
   switch(action.type) {
+  case NOTIFICATIONS_LOAD_PENDING:
+    return state.update('items', list => state.get('pendingItems').concat(list)).set('pendingItems', ImmutableList());
   case NOTIFICATIONS_EXPAND_REQUEST:
     return state.set('isLoading', true);
   case NOTIFICATIONS_EXPAND_FAIL:
@@ -104,7 +112,7 @@ export default function notifications(state = initialState, action) {
   case NOTIFICATIONS_SCROLL_TOP:
     return updateTop(state, action.top);
   case NOTIFICATIONS_UPDATE:
-    return normalizeNotification(state, action.notification);
+    return normalizeNotification(state, action.notification, action.usePendingItems);
   case NOTIFICATIONS_EXPAND_SUCCESS:
     return expandNormalizedNotifications(state, action.notifications, action.next);
   case ACCOUNT_BLOCK_SUCCESS:
