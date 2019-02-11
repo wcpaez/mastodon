@@ -133,7 +133,7 @@ export default function timelines(state = initialState, action) {
   switch(action.type) {
   case TIMELINE_LOAD_PENDING:
     return state.update(action.timeline, initialTimeline, map =>
-      map.update('items', list => map.get('pendingItems').concat(list)).set('pendingItems', ImmutableList()));
+      map.update('items', list => map.get('pendingItems').concat(list.take(40))).set('pendingItems', ImmutableList()));
   case TIMELINE_EXPAND_REQUEST:
     return state.update(action.timeline, initialTimeline, map => map.set('isLoading', true));
   case TIMELINE_EXPAND_FAIL:

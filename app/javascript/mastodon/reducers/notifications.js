@@ -102,7 +102,7 @@ const deleteByStatus = (state, statusId) => {
 export default function notifications(state = initialState, action) {
   switch(action.type) {
   case NOTIFICATIONS_LOAD_PENDING:
-    return state.update('items', list => state.get('pendingItems').concat(list)).set('pendingItems', ImmutableList());
+    return state.update('items', list => state.get('pendingItems').concat(list.take(40))).set('pendingItems', ImmutableList());
   case NOTIFICATIONS_EXPAND_REQUEST:
     return state.set('isLoading', true);
   case NOTIFICATIONS_EXPAND_FAIL:
