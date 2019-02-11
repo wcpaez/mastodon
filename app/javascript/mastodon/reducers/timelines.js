@@ -31,6 +31,7 @@ const initialTimeline = ImmutableMap({
 const expandNormalizedTimeline = (state, timeline, statuses, next, isPartial, isLoadingRecent) => {
   return state.update(timeline, initialTimeline, map => map.withMutations(mMap => {
     mMap.set('isLoading', false);
+
     if (!next && !isLoadingRecent) mMap.set('hasMore', false);
 
     if (!statuses.isEmpty()) {
@@ -63,7 +64,7 @@ const updateTimeline = (state, timeline, status, usePendingItems) => {
       return state;
     }
 
-    return state.update(timeline, initialTimeline, map => map.update('pendingItems', list => list.unshift(status.get('id'))));
+    return state.update(timeline, initialTimeline, map => map.update('pendingItems', list => list.unshift(status.get('id'))).set('unread', true));
   }
 
   const top        = state.getIn([timeline, 'top']);
@@ -133,7 +134,7 @@ export default function timelines(state = initialState, action) {
   switch(action.type) {
   case TIMELINE_LOAD_PENDING:
     return state.update(action.timeline, initialTimeline, map =>
-      map.update('items', list => map.get('pendingItems').concat(list.take(40))).set('pendingItems', ImmutableList()));
+      map.update('items', list => map.get('pendingItems').concat(list.take(40))).set('pendingItems', ImmutableList()).set('unread', false));
   case TIMELINE_EXPAND_REQUEST:
     return state.update(action.timeline, initialTimeline, map => map.set('isLoading', true));
   case TIMELINE_EXPAND_FAIL:

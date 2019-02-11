@@ -35,7 +35,7 @@ const notificationToMap = notification => ImmutableMap({
 
 const normalizeNotification = (state, notification, usePendingItems) => {
   if (usePendingItems) {
-    return state.update('pendingItems', list => list.unshift(notificationToMap(notification)));
+    return state.update('pendingItems', list => list.unshift(notificationToMap(notification))).set('unread', true);
   }
 
   const top = state.get('top');
@@ -102,7 +102,7 @@ const deleteByStatus = (state, statusId) => {
 export default function notifications(state = initialState, action) {
   switch(action.type) {
   case NOTIFICATIONS_LOAD_PENDING:
-    return state.update('items', list => state.get('pendingItems').concat(list.take(40))).set('pendingItems', ImmutableList());
+    return state.update('items', list => state.get('pendingItems').concat(list.take(40))).set('pendingItems', ImmutableList()).set('unread', false);
   case NOTIFICATIONS_EXPAND_REQUEST:
     return state.set('isLoading', true);
   case NOTIFICATIONS_EXPAND_FAIL:
