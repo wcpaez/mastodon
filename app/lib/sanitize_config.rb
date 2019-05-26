@@ -19,6 +19,11 @@ class Sanitize
       node['class'] = class_list.join(' ')
     end
 
+    UNSUPPORTED_ELEMENTS_TRANSFORMER = lambda do |env|
+      return unless %w(h1 h2 h3 h4 h5 h6 blockquote pre li).include?(env[:node_name])
+      env[:node].name = 'p'
+    end
+
     MASTODON_STRICT ||= freeze_config(
       elements: %w(p br span a),
 
@@ -40,6 +45,7 @@ class Sanitize
 
       transformers: [
         CLASS_WHITELIST_TRANSFORMER,
+        UNSUPPORTED_ELEMENTS_TRANSFORMER,
       ]
     )
 
